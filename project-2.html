@@ -153,7 +153,8 @@
     }
     .project-video {
       width: 100%; display: block;
-      aspect-ratio: 16 / 9; object-fit: cover;
+      aspect-ratio: 16 / 9;
+      border: none;
     }
 
     /* ── Text sections ───────────────────────────────────────────── */
@@ -294,9 +295,10 @@
       <h1>rockrock mushroom babe</h1>
 
       <div class="video-wrap">
-        <video class="project-video" autoplay muted loop playsinline controls>
-          <source src="rockrockmushroombabe.mp4" type="video/mp4">
-        </video>
+        <iframe class="project-video"
+          src="https://www.youtube.com/embed/QyoTqN33Ijc?autoplay=1&mute=1&loop=1&playlist=QyoTqN33Ijc"
+          allow="autoplay; fullscreen"
+          allowfullscreen></iframe>
       </div>
     </section>
 

@@ -348,7 +348,7 @@
     }
     .rock-video {
       width: 100%; height: 100%;
-      object-fit: cover;
+      border: none;
       display: block;
     }
     /* Floating bubbles at the video / title seam */
@@ -616,9 +616,10 @@
           <span class="rb rb6"></span>
         </div>
         <div class="rock-media">
-          <video autoplay muted loop playsinline class="rock-video">
-            <source src="rockrockmushroombabe.mp4" type="video/mp4">
-          </video>
+          <iframe class="rock-video"
+            src="https://www.youtube.com/embed/QyoTqN33Ijc?autoplay=1&mute=1&loop=1&playlist=QyoTqN33Ijc"
+            allow="autoplay; fullscreen"
+            allowfullscreen></iframe>
         </div>
         <div class="content-title">mushroom babe</div>
       </div>
