@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      font-family: 'Nunito', sans-serif;
+      overflow-y: auto;
+      background:
+        radial-gradient(ellipse at 20% 60%, rgba(140, 30, 70, 0.45) 0%, transparent 42%),
+        radial-gradient(ellipse at 80% 70%, rgba(110, 20, 55, 0.38) 0%, transparent 38%),
+        linear-gradient(to bottom, #0a0205 0%, #160310 55%, #1e0518 100%);
+      color: rgba(255, 200, 220, 0.88);
+      position: relative;
+      isolation: isolate;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url('bg.png') center / cover no-repeat;
+      /* sepia→hue-rotate shifts image to rose-pink (~#ffb3c6) */
+      filter: sepia(1) hue-rotate(315deg) saturate(2) brightness(0.85);
+      mix-blend-mode: screen;   /* dark photo areas invisible, bright areas glow pink */
+      opacity: 0.65;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* ── Shared Header ─────────────────────────────────────────── */
+    .page-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 82px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(10, 2, 8, 0.78);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 130, 170, 0.25);
+      z-index: 200;
+    }
+    .site-logo { display: block; text-decoration: none; }
+    .site-logo img {
+      height: 70px; width: auto;
+      filter: drop-shadow(0 0 6px rgba(200, 230, 210, 0.3));
+      transition: filter 0.3s, transform 0.3s;
+    }
+    .site-logo:hover img {
+      filter: drop-shadow(0 0 16px rgba(200, 230, 210, 0.85));
+      transform: scale(1.07);
+    }
+    .nav {
+      display: flex; gap: 6px; align-items: center;
+      background: rgba(20, 5, 14, 0.82);
+      border: 1px solid rgba(255, 130, 170, 0.45);
+      border-radius: 40px; padding: 10px 18px;
+      backdrop-filter: blur(16px); overflow: visible;
+    }
+    .nav-tab {
+      display: inline-block; padding: 9px 26px; border-radius: 28px;
+      font-size: 16px; font-family: 'Georgia', serif; letter-spacing: 1px;
+      text-decoration: none; border: 1.5px solid transparent;
+      transition: all 0.28s ease; background: transparent;
+    }
+    .nav-tab.about   { color: #ffb3c6; }
+    .nav-tab.project { color: #c9b3ff; }
+    .nav-tab.connect { color: #b3d9ff; }
+    .nav-tab.about:hover {
+      border-color: #ffb3c6; background: rgba(255,179,198,0.07);
+      box-shadow: 0 0 10px rgba(255,179,198,0.6), 0 0 24px rgba(255,179,198,0.22), inset 0 0 12px rgba(255,179,198,0.07);
+    }
+    .nav-tab.project:hover, .nav-dropdown-wrap:hover .nav-tab.project {
+      border-color: #c9b3ff; background: rgba(201,179,255,0.07);
+      box-shadow: 0 0 10px rgba(201,179,255,0.6), 0 0 24px rgba(201,179,255,0.22), inset 0 0 12px rgba(201,179,255,0.07);
+    }
+    .nav-tab.connect:hover {
+      border-color: #b3d9ff; background: rgba(179,217,255,0.07);
+      box-shadow: 0 0 10px rgba(179,217,255,0.6), 0 0 24px rgba(179,217,255,0.22), inset 0 0 12px rgba(179,217,255,0.07);
+    }
+    .nav-dropdown-wrap { position: relative; }
+    .project-dropdown {
+      position: absolute; top: calc(100% + 14px); left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      min-width: 152px;
+      background: rgba(6, 24, 8, 0.95); border: 1px solid rgba(28,75,35,0.55);
+      border-radius: 20px; padding: 8px 6px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s ease, transform 0.28s ease; z-index: 400;
+    }
+    .project-dropdown::before { content:''; position:absolute; bottom:100%; left:0; right:0; height:18px; }
+    .nav-dropdown-wrap:hover .project-dropdown { opacity:1; pointer-events:all; transform:translateX(-50%) translateY(0); }
+    .dropdown-item {
+      display: block; padding: 9px 18px; color: #c9b3ff;
+      font-size: 14px; font-family: 'Georgia', serif; letter-spacing: 0.7px;
+      text-decoration: none; border-radius: 14px; border: 1.5px solid transparent;
+      transition: all 0.22s ease;
+    }
+    .dropdown-item:hover {
+      border-color: #c9b3ff; background: rgba(201,179,255,0.08);
+      box-shadow: 0 0 8px rgba(201,179,255,0.45), 0 0 18px rgba(201,179,255,0.15);
+    }
+
+    /* ── Page content ───────────────────────────────────────────── */
+    main {
+      padding-top: 82px;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding-bottom: 80px;
+    }
+
+    .about-inner {
+      max-width: 740px;
+      width: 90%;
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(64px, 10vw, 110px);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: rgba(255, 200, 220, 0.95);
+      text-shadow:
+        0 0 40px rgba(255, 130, 170, 0.55),
+        0 0 80px rgba(220, 80, 130, 0.25);
+      margin-bottom: 48px;
+      line-height: 1;
+    }
+
+    .divider {
+      width: 80px; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255, 150, 190, 0.65), transparent);
+      margin: 0 auto 48px;
+    }
+
+    p {
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px; line-height: 1.9;
+      color: rgba(255, 195, 215, 0.78);
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    em { color: rgba(255, 179, 198, 0.95); font-style: italic; }
+
+    .resume-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      margin-top: 42px;
+      padding: 14px 36px;
+      font-family: 'Cinzel', serif;
+      font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(255, 200, 220, 0.92);
+      text-decoration: none;
+      border: 1.5px solid rgba(255, 150, 190, 0.52);
+      border-radius: 50px;
+      background: rgba(40, 8, 22, 0.55);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 14px rgba(255, 130, 170, 0.18), inset 0 0 18px rgba(200, 60, 110, 0.06);
+      transition: all 0.3s ease;
+    }
+    .resume-btn svg { flex-shrink: 0; opacity: 0.8; }
+    .resume-btn:hover {
+      border-color: rgba(255, 179, 198, 0.90);
+      background: rgba(55, 10, 30, 0.70);
+      box-shadow: 0 0 22px rgba(255, 130, 170, 0.48), 0 0 50px rgba(220, 80, 130, 0.20), inset 0 0 22px rgba(200, 60, 110, 0.10);
+      color: #fff0f5;
+      transform: translateY(-2px);
+    }
+
+    .name-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(20px, 3.5vw, 38px);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: rgba(255, 179, 198, 0.55);
+      text-shadow:
+        0 0 22px rgba(255, 130, 170, 0.30),
+        0 0 50px rgba(220, 80, 130, 0.14);
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 36px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <a href="index.html" class="site-logo"><img src="logo.png" alt="Home"></a>
+    <nav class="nav">
+      <a href="about.html" class="nav-tab about">about</a>
+      <div class="nav-dropdown-wrap">
+        <a href="#" class="nav-tab project">project</a>
+        <div class="project-dropdown">
+          <a href="project-1.html" class="dropdown-item">WIRKED</a>
+          <a href="project-2.html" class="dropdown-item">mushroom babe</a>
+          <a href="project-3.html" class="dropdown-item">EVIL Boba</a>
+          <a href="project-4.html" class="dropdown-item">upcoming motion capture</a>
+        </div>
+      </div>
+      <a href="connect.html" class="nav-tab connect">connect</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="about-inner">
+      <h1>about</h1>
+      <div class="name-title">Brianna Jiayi Zhao</div>
+      <div class="divider"></div>
+      <p>
+        Hi, I'm Brianna Zhao — a human-centered interactive designer with expertise in UI/UX, front-end development, and visual storytelling, with a recently discovered rising passion in game building and developing.
+      </p>
+      <p>
+        I started in backend development but very soon after realized my true interest lay in how people interact with what we create — not just how it looks, but how it feels, flows, and communicates. So I pivoted to UI/UX and front-end development, and I haven't looked back.
+      </p>
+      <p>
+        Now I focus on creating personal, intuitive, user-centered interfaces and creative front-end projects. I'm working toward a career in user experience and product management where I can craft engaging and meaningful digital interactions. I'm particularly drawn to universal and cross-cultural design systems — frameworks that make products accessible and usable across diverse cultural, generational, and demographic groups, accounting for differences in language, cognition, ability, age, and cultural context.
+      </p>
+      <p>
+        Rather than designing for a single "default" user, I aim to create adaptive, human-centered interfaces that respond to the full spectrum of human diversity. A big part of my approach is to <em>be</em> the user — let people engage through their natural flow, observe without leading, and design from genuine empathy outward.
+      </p>
+
+      <a href="BRIANNAZresume.pdf" class="resume-btn" download>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download Resume
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

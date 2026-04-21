@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wïrked</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      overflow-y: auto; overflow-x: hidden;
+      /* Wïrk brand stripes: dark navy #2C243A + deep rose #BE2E5C */
+      background: repeating-linear-gradient(
+        180deg,
+        #2C243A 0px, #2C243A 440px,
+        rgba(190, 46, 92, 0.6) 455px,
+        #BE2E5C 470px, #BE2E5C 910px,
+        rgba(44, 36, 58, 0.72) 925px,
+        #2C243A 940px
+      );
+    }
+
+    /* ── Fixed header ─────────────────────────────────────────── */
+    .page-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 80px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(18, 8, 22, 0.88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(190, 46, 92, 0.3);
+      z-index: 200;
+    }
+
+    /* Wïrk wordmark logo — circular, matches the wirk_logo_figma frame style */
+    .site-logo {
+      display: flex; align-items: center; justify-content: center;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: #2C243A;
+      border: 2px solid rgba(240, 184, 204, 0.32);
+      text-decoration: none;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .site-logo:hover { border-color: rgba(240, 184, 204, 0.9); transform: scale(1.06); }
+    .site-logo .wmark {
+      font-family: 'Roboto Condensed', sans-serif;
+      font-weight: 700; font-size: 21px; line-height: 1;
+      color: #F0B8CC; letter-spacing: -0.01em;
+      user-select: none;
+    }
+    .site-logo .wmark sup { font-size: 10px; vertical-align: super; letter-spacing: 0; }
+
+    /* Nav */
+    .nav {
+      display: flex; gap: 6px; align-items: center;
+      background: rgba(30, 12, 24, 0.82);
+      border: 1px solid rgba(190, 46, 92, 0.4);
+      border-radius: 40px; padding: 10px 18px;
+      backdrop-filter: blur(16px); overflow: visible;
+    }
+    .nav-tab {
+      display: inline-block; padding: 9px 26px; border-radius: 28px;
+      font-size: 16px; font-family: 'Georgia', serif; letter-spacing: 1px;
+      text-decoration: none; border: 1.5px solid transparent;
+      transition: all 0.28s ease; background: transparent;
+    }
+    .nav-tab.about   { color: #ffb3c6; }
+    .nav-tab.project { color: #c9b3ff; }
+    .nav-tab.connect { color: #b3d9ff; }
+    .nav-tab.about:hover { border-color:#ffb3c6; background:rgba(255,179,198,0.07); box-shadow:0 0 10px rgba(255,179,198,0.6),0 0 24px rgba(255,179,198,0.22); }
+    .nav-tab.project:hover,.nav-dropdown-wrap:hover .nav-tab.project { border-color:#c9b3ff; background:rgba(201,179,255,0.07); box-shadow:0 0 10px rgba(201,179,255,0.6),0 0 24px rgba(201,179,255,0.22); }
+    .nav-tab.connect:hover { border-color:#b3d9ff; background:rgba(179,217,255,0.07); box-shadow:0 0 10px rgba(179,217,255,0.6),0 0 24px rgba(179,217,255,0.22); }
+    .nav-dropdown-wrap { position: relative; }
+    .project-dropdown {
+      position: absolute; top: calc(100% + 14px); left: 50%;
+      transform: translateX(-50%) translateY(-8px); min-width: 152px;
+      background: rgba(22,8,18,0.95); border: 1px solid rgba(190,46,92,0.4);
+      border-radius: 20px; padding: 8px 6px; backdrop-filter: blur(18px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.28s ease, transform 0.28s ease; z-index: 400;
+    }
+    .project-dropdown::before { content:''; position:absolute; bottom:100%; left:0; right:0; height:18px; }
+    .nav-dropdown-wrap:hover .project-dropdown { opacity:1; pointer-events:all; transform:translateX(-50%) translateY(0); }
+    .dropdown-item { display:block; padding:9px 18px; color:#c9b3ff; font-size:14px; font-family:'Georgia',serif; letter-spacing:0.7px; text-decoration:none; border-radius:14px; border:1.5px solid transparent; transition:all 0.22s ease; }
+    .dropdown-item:hover { border-color:#c9b3ff; background:rgba(201,179,255,0.08); box-shadow:0 0 8px rgba(201,179,255,0.45); }
+
+    /* ── Main scrollable content ──────────────────────────────── */
+    main { padding-top: 80px; }
+
+    /* ── Intro section ────────────────────────────────────────── */
+    .section-intro {
+      background: rgba(16, 7, 18, 0.96);
+      padding: 72px 60px 64px;
+      display: flex;
+      justify-content: center;
+    }
+    .intro-inner {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+      max-width: 960px;
+      width: 100%;
+    }
+    .intro-image-col {
+      flex: 0 0 auto;
+      width: 400px;
+    }
+    /* Pink dashed glow frame around intro mockup */
+    .intro-deco-frame {
+      border-radius: 22px;
+      padding: 6px;
+      border: 2px dashed rgba(255, 150, 200, 0.6);
+      box-shadow:
+        0 0 14px rgba(255, 120, 180, 0.45),
+        0 0 36px rgba(220, 80, 150, 0.22),
+        0 0 64px rgba(190, 46, 92, 0.12);
+    }
+    .intro-mockup {
+      width: 100%; height: auto;
+      border-radius: 16px;
+      display: block;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+    }
+    .intro-text-col { flex: 1; }
+    .intro-eyebrow {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase;
+      color: rgba(190, 46, 92, 0.8);
+      margin-bottom: 10px;
+    }
+    .intro-subheading {
+      font-family: 'Cinzel', serif;
+      font-size: 26px; font-weight: 700; line-height: 1.2;
+      color: rgba(255, 200, 220, 0.96);
+      text-shadow: 0 0 18px rgba(190,46,92,0.38), 0 0 40px rgba(160,30,70,0.18);
+      margin-bottom: 22px;
+    }
+    .intro-body {
+      font-family: 'Nunito', sans-serif;
+      font-size: 14px; line-height: 1.82;
+      color: rgba(235, 200, 215, 0.72);
+      margin-bottom: 14px;
+    }
+    .intro-body:last-child { margin-bottom: 0; }
+
+    /* ── Section: dark (display areas) ───────────────────────── */
+    .section-display {
+      background: rgba(16, 7, 18, 0.96);
+      padding: 64px 40px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    .project-hero {
+      width: 100%; max-width: 960px;
+      text-align: center; margin-bottom: 52px;
+    }
+
+    .project-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(240, 184, 204, 0.6); margin-bottom: 14px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(48px, 7vw, 84px);
+      font-weight: 900; letter-spacing: 0.08em;
+      color: rgba(255, 200, 220, 0.97);
+      text-shadow:
+        0 0 16px rgba(230, 80, 130, 0.95),
+        0 0 38px rgba(200, 50, 90, 0.65),
+        0 0 75px rgba(160, 30, 70, 0.38),
+        0 0 130px rgba(120, 20, 50, 0.2);
+      line-height: 1.1;
+    }
+
+    /* ── Phone mockup gallery ──────────────────────────────────── */
+    .phone-gallery {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 960px;
+      width: 100%;
+    }
+
+    .phone-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+
+    /* The phone frame shell */
+    .phone {
+      width: 200px; height: 410px;
+      border-radius: 38px;
+      background: #E9E9E9;
+      border: 3.5px solid #2C243A;
+      overflow: hidden;
+      position: relative;
+      flex-shrink: 0;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(240,184,204,0.12),
+                  0 0 16px 2px rgba(255, 120, 180, 0.32),
+                  0 0 36px 4px rgba(220, 80, 150, 0.15);
+      outline: 2px dashed rgba(255, 155, 205, 0.55);
+      outline-offset: 7px;
+    }
+
+    .phone-label {
+      font-family: 'Nunito', sans-serif;
+      font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(240, 184, 204, 0.6);
+    }
+
+    /* ── App screen shared elements ────────────────────────────── */
+    .screen {
+      width: 100%; height: 100%;
+      position: relative; overflow: hidden;
+    }
+
+    /* ── Figma embed inside phone shell ─────────────────────────── */
+    .figma-embed {
+      position: absolute;
+      top: 0; left: 0;
+      width: 393px; height: 852px;
+      border: none;
+      transform: scale(0.509);
+      transform-origin: top left;
+      pointer-events: none; /* visual display only */
+    }
+
+    .app-bg-pink {
+      background: linear-gradient(168deg,
+        rgba(218, 152, 175, 0.55) 0%,
+        rgba(233, 233, 233, 1) 38%,
+        rgba(233, 233, 233, 1) 100%);
+    }
+    .app-bg-dark {
+      background: linear-gradient(168deg, #2C243A 0%, #1A1224 100%);
+    }
+
+    .app-status {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 12px 4px;
+      font-family: 'Roboto Condensed', sans-serif;
+      font-size: 8px; font-weight: 700;
+      color: #1A1224;
+    }
+    .app-status.light { color: rgba(255,255,255,0.9); }
+
+    .app-pills {
+      display: flex; justify-content: space-between; padding: 0 8px;
+      margin-bottom: 8px;
+    }
+    .pill-btn {
+      background: rgba(255,255,255,0.65);
+      border-radius: 100px; padding: 4px 9px;
+      font-family: 'Roboto Condensed', sans-serif;
+      font-size: 8px; font-weight: 700; color: #2C243A;
+      display: flex; align-items: center; gap: 3px;
+    }
+    .pill-btn.dark {
+      background: rgba(44,36,58,0.85); color: #F0B8CC;
+    }
+
+    /* ── HOME screen ───────────────────────────── */
+    .screen-home .ring-section {
+      display: flex; flex-direction: column; align-items: center; padding: 6px 0 2px;
+    }
+    .ring-outer {
+      width: 118px; height: 118px; border-radius: 50%;
+      background: #2C243A;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .ring-arc {
+      position: absolute; inset: 7px; border-radius: 50%;
+      background: conic-gradient(
+        #BE2E5C 0deg 260deg,
+        rgba(60,48,78,0.55) 260deg 360deg
+      );
+    }
+    .ring-arc-inner {
+      position: absolute; inset: 19px; border-radius: 50%;
+      background: #2C243A;
+    }
+    .ring-arc-inner2 {
+      position: absolute; inset: 25px; border-radius: 50%;
+      background: conic-gradient(
+        rgba(190,46,92,0.55) 0deg 220deg,
+        rgba(60,48,78,0.3) 220deg 360deg
+      );
+    }
+    .ring-arc-inner3 {
+      position: absolute; inset: 33px; border-radius: 50%;
+      background: #2C243A;
+    }
+    .ring-center {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 66px; height: 66px;
+      border-radius: 50%; background: #2C243A;
+    }
+    .ring-tiny { font-family:'Roboto Condensed',sans-serif; font-size:5.5px; font-weight:400; color:rgba(255,255,255,0.7); letter-spacing:0.3px; }
+    .ring-num  { font-family:'Roboto Condensed',sans-serif; font-size:22px; font-weight:700; color:white; line-height:1; }
+    .ring-unit { font-family:'Roboto Condensed',sans-serif; font-size:6px; font-weight:700; color:rgba(255,255,255,0.85); }
+    .ring-goal {
+      font-family:'Roboto Condensed',sans-serif; font-size:7.5px; font-weight:700;
+      color:#2C243A; text-align:center; margin: 4px 0 6px;
+    }
+
+    .streak-row {
+      margin: 0 8px 6px;
+      background: #2C243A; border-radius: 10px; padding: 7px 8px;
+    }
+    .streak-title { font-family:'Roboto Condensed',sans-serif; font-size:8px; font-weight:700; color:white; margin-bottom:4px; }
+    .streak-days { display:flex; gap:3px; justify-content:space-between; }
+    .sday { display:flex; flex-direction:column; align-items:center; gap:2px; }
+    .sday-dot {
+      width:18px; height:18px; border-radius:50%;
+      background:rgba(190,46,92,0.75);
+      display:flex; align-items:center; justify-content:center;
+      font-size:9px; color:white;
+    }
+    .sday-dot.x { background:rgba(255,255,255,0.15); }
+    .sday-lbl { font-family:'Roboto Condensed',sans-serif; font-size:5px; color:rgba(255,255,255,0.5); }
+
+    .bottom-cards {
+      display:flex; gap:5px; padding: 0 8px;
+    }
+    .bcard {
+      flex:1; border-radius:12px; height:65px;
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; gap:4px;
+      font-family:'Roboto Condensed',sans-serif; font-size:7px; font-weight:700;
+      color:white;
+    }
+    .bcard .bicon { font-size:16px; line-height:1; }
+    .bcard.statement { background:rgba(44,36,58,0.85); }
+    .bcard.work      { background:#BE2E5C; }
+    .bcard.boosts    { background:rgba(80,55,100,0.7); }
+
+    .app-nav {
+      position:absolute; bottom:0; left:0; right:0; height:38px;
+      background:rgba(255,255,255,0.6); backdrop-filter:blur(10px);
+      display:flex; align-items:center; justify-content:space-around;
+      padding: 0 12px;
+    }
+    .nav-icon { font-size:14px; }
+    .nav-pay-btn {
+      background:rgba(255,255,255,0.8); border-radius:100px;
+      padding:4px 14px;
+      font-family:'Roboto Condensed',sans-serif; font-size:9px; font-weight:700;
+      color:#2C243A;
+    }
+
+    /* ── CONNECT screen ──────────────────────────── */
+    .screen-connect .conn-header {
+      padding: 22px 14px 10px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .conn-title {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:16px; font-weight:700; color:#BE2E5C;
+    }
+    .conn-sub {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:8px; font-weight:400; color:rgba(44,36,58,0.6);
+      padding: 0 14px; margin-bottom:8px;
+    }
+    .friend-list { display:flex; flex-direction:column; gap:6px; padding:0 10px; }
+    .friend-row {
+      display:flex; align-items:center; gap:8px;
+      background:rgba(255,255,255,0.72); border-radius:12px; padding:8px 10px;
+    }
+    .avatar {
+      width:28px; height:28px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Roboto Condensed',sans-serif; font-size:11px; font-weight:700;
+      color:white; flex-shrink:0;
+    }
+    .av-pink   { background:#BE2E5C; }
+    .av-navy   { background:#2C243A; }
+    .av-rose   { background:#9B1E40; }
+    .f-info { flex:1; }
+    .f-name { font-family:'Roboto Condensed',sans-serif; font-size:9px; font-weight:700; color:#2C243A; }
+    .f-bucks { font-family:'Roboto Condensed',sans-serif; font-size:7px; color:rgba(44,36,58,0.55); }
+    .f-badge {
+      font-family:'Roboto Condensed',sans-serif; font-size:7px; font-weight:700;
+      color:#BE2E5C; background:rgba(190,46,92,0.12);
+      border-radius:100px; padding:2px 6px;
+    }
+    .conn-wbucks {
+      margin: 8px 10px; background:#2C243A; border-radius:12px; padding:10px 12px;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .wb-label { font-family:'Roboto Condensed',sans-serif; font-size:8px; color:rgba(255,255,255,0.65); }
+    .wb-val   { font-family:'Roboto Condensed',sans-serif; font-size:16px; font-weight:700; color:#F0B8CC; }
+
+    /* ── BOOST screen ──────────────────────────────── */
+    .screen-boost .boost-header {
+      padding:22px 14px 8px;
+    }
+    .boost-title {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:16px; font-weight:700; color:#BE2E5C;
+    }
+    .boost-sub {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:8px; color:rgba(44,36,58,0.6); margin-top:2px;
+    }
+    .boost-cards { display:flex; flex-direction:column; gap:8px; padding:0 10px; }
+    .bst-card {
+      background:#2C243A; border-radius:14px; padding:12px 14px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .bst-icon { font-size:22px; }
+    .bst-info { flex:1; }
+    .bst-name { font-family:'Roboto Condensed',sans-serif; font-size:10px; font-weight:700; color:white; }
+    .bst-desc { font-family:'Roboto Condensed',sans-serif; font-size:7px; color:rgba(255,255,255,0.55); margin-top:2px; }
+    .bst-cost {
+      font-family:'Roboto Condensed',sans-serif; font-size:10px; font-weight:700;
+      color:#F0B8CC; background:rgba(190,46,92,0.2); border-radius:100px;
+      padding:3px 8px;
+    }
+
+    /* ── HELLO PAGE ──────────────────────────────────── */
+    .screen-hello {
+      background: linear-gradient(168deg, rgba(218,152,175,0.5) 0%, #E9E9E9 55%);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; padding: 24px;
+      height:100%;
+    }
+    .hello-logo {
+      width:80px; height:80px; border-radius:50%;
+      background:#2C243A;
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:20px;
+    }
+    .hello-logo-text {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:24px; font-weight:700; color:#F0B8CC;
+    }
+    .hello-big {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:28px; font-weight:700; color:#2C243A;
+      text-align:center; line-height:1.1; margin-bottom:10px;
+    }
+    .hello-sub {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:9px; color:rgba(44,36,58,0.55);
+      text-align:center; line-height:1.5; margin-bottom:28px;
+    }
+    .hello-btn {
+      background:#BE2E5C; border-radius:100px; padding:12px 32px;
+      font-family:'Roboto Condensed',sans-serif; font-size:12px; font-weight:700;
+      color:white; margin-bottom:10px; width:100%; text-align:center;
+    }
+    .hello-btn.outline {
+      background:transparent; border:1.5px solid rgba(44,36,58,0.25); color:#2C243A;
+    }
+
+    /* ── SPIN PAGE ─────────────────────────────────── */
+    .screen-spin {
+      background:#2C243A; height:100%;
+      display:flex; flex-direction:column; align-items:center; padding:20px 14px;
+    }
+    .spin-title {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:14px; font-weight:700; color:#F0B8CC;
+      margin-bottom:4px; align-self:flex-start;
+    }
+    .spin-sub {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:8px; color:rgba(240,184,204,0.5);
+      margin-bottom:20px; align-self:flex-start;
+    }
+    .spin-wheel {
+      width:160px; height:160px; border-radius:50%;
+      position:relative; margin-bottom:18px;
+      border:4px solid rgba(240,184,204,0.2);
+      overflow:hidden;
+    }
+    .spin-slice {
+      position:absolute; inset:0;
+      background:conic-gradient(
+        #BE2E5C 0deg 60deg,
+        #9B1E40 60deg 120deg,
+        #BE2E5C 120deg 180deg,
+        #9B1E40 180deg 240deg,
+        #BE2E5C 240deg 300deg,
+        #9B1E40 300deg 360deg
+      );
+    }
+    .spin-center {
+      position:absolute; inset:25%;
+      border-radius:50%; background:#2C243A;
+      border:3px solid rgba(240,184,204,0.3);
+      display:flex; align-items:center; justify-content:center;
+    }
+    .spin-center-text {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:8px; font-weight:700; color:#F0B8CC; text-align:center;
+    }
+    .spin-prize-row {
+      display:flex; gap:6px; width:100%;
+    }
+    .prize-chip {
+      flex:1; background:rgba(240,184,204,0.1);
+      border:1px solid rgba(240,184,204,0.2);
+      border-radius:10px; padding:8px 4px; text-align:center;
+    }
+    .prize-val {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:12px; font-weight:700; color:#F0B8CC;
+    }
+    .prize-lbl {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:6px; color:rgba(240,184,204,0.5);
+    }
+    .spin-btn {
+      margin-top:14px; width:100%; background:#BE2E5C;
+      border-radius:100px; padding:10px;
+      font-family:'Roboto Condensed',sans-serif; font-size:12px; font-weight:700;
+      color:white; text-align:center;
+    }
+
+    /* ── CAPTCHA screen ──────────────────────────── */
+    .screen-captcha {
+      background:#E9E9E9; height:100%;
+      display:flex; flex-direction:column; padding:20px 12px;
+    }
+    .cap-prompt {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:9px; font-weight:700; color:#2C243A;
+      text-align:center; line-height:1.4; margin-bottom:12px;
+      background:rgba(44,36,58,0.08); border-radius:10px;
+      padding:8px 10px;
+    }
+    .cap-prompt strong { color:#BE2E5C; }
+    .cap-grid {
+      display:grid; grid-template-columns:repeat(3,1fr); gap:4px;
+      margin-bottom:12px;
+    }
+    .cap-cell {
+      aspect-ratio:1; border-radius:6px;
+      display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .cap-cell.selected {
+      outline:2px solid #BE2E5C;
+    }
+    .cap-inner {
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px;
+    }
+    .cap-check {
+      position:absolute; bottom:3px; right:3px;
+      width:12px; height:12px; border-radius:50%;
+      background:#BE2E5C;
+      display:flex; align-items:center; justify-content:center;
+      font-size:7px; color:white; line-height:1;
+    }
+    .cap-btn {
+      background:#2C243A; border-radius:100px; padding:10px;
+      font-family:'Roboto Condensed',sans-serif; font-size:11px; font-weight:700;
+      color:white; text-align:center; margin-top:auto;
+    }
+
+    /* ── PAY screen ──────────────────────────────── */
+    .screen-pay {
+      background: linear-gradient(168deg, #2C243A 0%, #1A1224 100%);
+      height:100%;
+      display:flex; flex-direction:column; align-items:center; padding:20px 14px;
+    }
+    .pay-status { width:100%; display:flex; justify-content:space-between; margin-bottom:20px; }
+    .pay-label {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:8px; font-weight:700; color:rgba(240,184,204,0.55); letter-spacing:1px;
+    }
+    .pay-title-row {
+      display:flex; align-items:center; gap:6px; margin-bottom:6px;
+    }
+    .pay-icon { font-size:18px; }
+    .pay-title {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:16px; font-weight:700; color:#F0B8CC;
+    }
+    .pay-amount {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:40px; font-weight:700; color:white; line-height:1;
+      text-align:center; margin:12px 0 4px;
+    }
+    .pay-unit {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:11px; font-weight:700; color:rgba(240,184,204,0.75);
+      text-align:center; margin-bottom:22px;
+    }
+    .tap-ring {
+      width:120px; height:120px; border-radius:50%;
+      border:2px solid rgba(240,184,204,0.25);
+      display:flex; align-items:center; justify-content:center;
+      position:relative; margin-bottom:18px;
+    }
+    .tap-ring::before {
+      content:''; position:absolute; inset:10px; border-radius:50%;
+      border:1.5px solid rgba(240,184,204,0.15);
+    }
+    .tap-inner {
+      width:74px; height:74px; border-radius:50%;
+      background:#BE2E5C;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+    }
+    .tap-icon { font-size:22px; margin-bottom:2px; }
+    .tap-lbl {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:7px; font-weight:700; color:rgba(255,255,255,0.85);
+    }
+    .pay-progress {
+      width:100%; background:rgba(240,184,204,0.12);
+      border-radius:100px; height:6px; margin-bottom:6px;
+    }
+    .pay-progress-fill {
+      height:100%; border-radius:100px;
+      background:linear-gradient(90deg, #BE2E5C, #F0B8CC);
+      width:38%;
+    }
+    .pay-progress-row {
+      display:flex; justify-content:space-between; width:100%;
+    }
+    .pay-prog-lbl {
+      font-family:'Roboto Condensed',sans-serif;
+      font-size:7px; color:rgba(240,184,204,0.5);
+    }
+
+    /* ── Section: light pink (text areas) ────────────────────── */
+    .section-text {
+      background: rgba(238, 185, 205, 0.93);
+      padding: 64px 60px;
+    }
+    .text-inner { max-width: 820px; margin: 0 auto; }
+
+    h2 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 4vw, 42px); font-weight: 700;
+      letter-spacing: 0.06em; color: #1e0b18; margin-bottom: 24px; line-height: 1.2;
+    }
+    p {
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px; line-height: 1.85; color: #2a0e1c; margin-bottom: 18px;
+    }
+    .tag-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
+    .tag {
+      display:inline-block; padding:6px 16px;
+      background:rgba(44,36,58,0.14); border:1px solid rgba(44,36,58,0.22);
+      border-radius:20px; font-family:'Nunito',sans-serif;
+      font-size:12px; letter-spacing:0.8px; text-transform:uppercase; color:#1e0b18;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Fixed header ──────────────────────────────────────────── -->
+  <header class="page-header">
+    <!-- Wïrk wordmark logo (wirk_logo_figma frame) — circular home button -->
+    <a href="index.html" class="site-logo" title="Home">
+      <span class="wmark">Wïrk</span>
+    </a>
+    <nav class="nav">
+      <a href="about.html" class="nav-tab about">about</a>
+      <div class="nav-dropdown-wrap">
+        <a href="#" class="nav-tab project">project</a>
+        <div class="project-dropdown">
+          <a href="project-1.html" class="dropdown-item">WIRKED</a>
+          <a href="project-2.html" class="dropdown-item">mushroom babe</a>
+          <a href="project-3.html" class="dropdown-item">EVIL Boba</a>
+          <a href="project-4.html" class="dropdown-item">upcoming motion capture</a>
+        </div>
+      </div>
+      <a href="connect.html" class="nav-tab connect">connect</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  INTRO — Wicked Problem                                     -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section-intro">
+      <div class="intro-inner">
+
+        <div class="intro-image-col">
+          <div class="intro-deco-frame">
+            <img src="wirk_mockup.png" alt="Wïrk app mockup" class="intro-mockup">
+          </div>
+        </div>
+
+        <div class="intro-text-col">
+          <div class="intro-eyebrow">Wicked Problem</div>
+          <h2 class="intro-subheading">Wïrked</h2>
+          <p class="intro-body">
+            Wirk is a revolutionary system that redefines how people pay for products.
+            Instead of using money as the middleman between work and purchases, Wirk removes
+            that extra step. Users no longer need to earn money first and then spend it.
+            With Wirk, they can simply work directly for the things they want — a true
+            "buy now, work later" model.
+          </p>
+          <p class="intro-body">
+            With Wirk, users make purchases using tap-to-pay on their phones. Once a purchase
+            is made, the app immediately converts the original price into wirk hours rather
+            than a monetary amount. Users then complete small tasks inside the app to work
+            off what they owe — mainly image-tagging activities that help train AI models
+            for Gork.
+          </p>
+          <p class="intro-body">
+            Through this system, users receive the product they want, work opportunities,
+            and a single integrated platform for both labour and payment. No side jobs to
+            search for, no cash transactions. Wirk creates a new payment experience built
+            on the value of human labour.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  DISPLAY BLOCK 1 — Connect · Home · Boost                  -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section-display">
+
+      <div class="project-hero">
+        <div class="project-label">Project 01</div>
+        <h1>Wïrked</h1>
+      </div>
+
+      <div class="phone-gallery">
+
+        <!-- ── CONNECT screen ──────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-869&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Connect</span>
+        </div>
+
+        <!-- ── HOME screen ─────────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-1943&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Home</span>
+        </div>
+
+        <!-- ── BOOST screen ────────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-1121&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Boost Page</span>
+        </div>
+
+      </div><!-- /phone-gallery -->
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  TEXT BLOCK 1                                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section-text">
+      <div class="text-inner">
+        <h2>Overview</h2>
+        <p>
+          Wïrked is a speculative UX project exploring what happens when labour and commerce become inseparable. The fictional Wïrk platform removes money from transactions entirely, offering users a "buy now, wïrk later" model — purchases are paid off through microtasks like AI image classification, directly within the app.
+        </p>
+        <p>
+          The design challenge was to make exploitation feel delightful. Every screen had to balance the sinister premise of unpaid gig labour with an interface so clean, gamified, and familiar that users might not notice — or might not mind. W-Bucks, streak rewards, and boost mechanics were designed to maximise engagement and rationalise participation.
+        </p>
+        <div class="tag-row">
+          <span class="tag">UX Design</span>
+          <span class="tag">Figma</span>
+          <span class="tag">Speculative Fiction</span>
+          <span class="tag">Gamification</span>
+          <span class="tag">Mobile App</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  DISPLAY BLOCK 2 — Hello · Spin · Captcha · Pay            -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section-display">
+      <div class="phone-gallery">
+
+        <!-- ── HELLO PAGE ──────────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2096-196&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Hello Page</span>
+        </div>
+
+        <!-- ── SPIN PAGE ────────────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-1030&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Spin Page</span>
+        </div>
+
+        <!-- ── CAPTCHA screen ──────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-1904&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Captcha</span>
+        </div>
+
+        <!-- ── PAY screen ───────────────────── -->
+        <div class="phone-wrap">
+          <div class="phone">
+            <iframe src="https://embed.figma.com/design/3ohoX1UMBohC9w2IJqBu9N/W%C3%AFrk?node-id=2492-1868&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
+          </div>
+          <span class="phone-label">Pay Screen 7</span>
+        </div>
+
+      </div><!-- /phone-gallery -->
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  TEXT BLOCK 2                                               -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="section-text">
+      <div class="text-inner">
+        <h2>Design Process</h2>
+        <p>
+          The interface was intentionally designed to weaponise familiarity. Streak counters, spin wheels, and progress rings borrow conventions from fitness and gaming apps — contexts where compulsive engagement is considered a feature. By making the labour loop feel rewarding rather than extractive, the UI challenges users (and designers) to interrogate what "good UX" can obscure.
+        </p>
+        <p>
+          The captcha task screen — where users identify images to "train AI" — is drawn directly from how CAPTCHA systems work in the real world. The irony is intentional: unpaid micro-labour is already everywhere, Wïrk simply makes the transaction visible and monetises it.
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
