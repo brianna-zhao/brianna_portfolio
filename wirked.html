@@ -7,7 +7,7 @@
   <title>Wïrked</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@300;400;500;600;700&family=Roboto+Condensed:wght@300;400;700&family=League+Spartan:wght@400;600;700&family=Libre+Baskerville:ital@0;1&family=Delicious+Handrawn&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -16,15 +16,77 @@
       font-family: 'Nunito', sans-serif;
       min-height: 100vh;
       overflow-y: auto; overflow-x: hidden;
-      /* Wïrk brand stripes: dark navy #2C243A + deep rose #BE2E5C */
-      background: repeating-linear-gradient(
-        180deg,
-        #2C243A 0px, #2C243A 440px,
-        rgba(190, 46, 92, 0.6) 455px,
-        #BE2E5C 470px, #BE2E5C 910px,
-        rgba(44, 36, 58, 0.72) 925px,
-        #2C243A 940px
-      );
+      background: #1E1E1E;
+    }
+
+    /* ── Layered reconstruction of the Wïrk Figma artboard ─────────
+       Stage is the 1512×9000 frame. Background gradient + transparent
+       foreground visuals are image layers; section text is real HTML
+       text; the de-backgrounded UI slices sit on top. Everything is
+       sized in % (position) and cqw (font), so it scales with width. */
+    .stage {
+      position: relative;
+      width: 100%;
+      max-width: 1512px;
+      margin: 0 auto;
+      aspect-ratio: 1512 / 9000;
+      container-type: inline-size;
+      background: #1E1E1E;
+    }
+    .layer {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+    .layer.bg  { object-fit: cover; }
+    .layer.fg  { object-fit: fill; }
+
+    /* de-backgrounded UI slices */
+    .slice { position: absolute; display: block; }
+    .slice.s1 { left: 26.058%; top: 35.533%; width: 65.542%; }
+    .slice.s2 { left: 7.143%;  top: 42.667%; width: 85.714%; }
+
+    /* real section text */
+    .t {
+      position: absolute;
+      font-family: 'League Spartan', sans-serif;
+      white-space: pre-wrap;
+      line-height: 1.05;
+    }
+    .t.head   { font-weight: 700; font-size: 2.116cqw; line-height: 1.25; }
+    .t.body   { font-family: 'Libre Baskerville', serif; font-size: 1.058cqw; line-height: 1.5; color: #fff; }
+    .t.assump { font-weight: 600; font-size: 1.587cqw; line-height: 1.0; color: #2C2439; }
+    .t.script { font-family: 'Delicious Handrawn', cursive; font-size: 2.116cqw; line-height: 1.25; color: #fff; white-space: nowrap; }
+
+    /* ── Clickable hotspots ──────────────────────────────────────── */
+    .hotspot {
+      position: absolute;
+      display: block;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .proto-btn {
+      left: 18.8%; top: 6.91%;
+      width: 15.6%; height: 0.80%;
+      border-radius: 17px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: Georgia, 'Times New Roman', serif;
+      font-weight: 500;
+      font-size: clamp(11px, 1.45vw, 23px);
+      letter-spacing: .3px;
+      color: transparent;
+      background: transparent;
+      transition: background .2s ease, color .2s ease;
+    }
+    .proto-btn:hover {
+      background: #ff8fc4;
+      color: #16235a;
+    }
+    .proto-phones {
+      left: 34.26%; top: 1.5%;
+      width: 52.91%; height: 6.67%;
     }
 
     /* ── Fixed header ─────────────────────────────────────────── */
@@ -32,10 +94,7 @@
       position: fixed; top: 0; left: 0; right: 0; height: 80px;
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 28px;
-      background: rgba(18, 8, 22, 0.88);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(190, 46, 92, 0.3);
+      background: transparent;
       z-index: 200;
     }
 
@@ -96,67 +155,60 @@
     .dropdown-item:hover { border-color:#c9b3ff; background:rgba(201,179,255,0.08); box-shadow:0 0 8px rgba(201,179,255,0.45); }
 
     /* ── Main scrollable content ──────────────────────────────── */
-    main { padding-top: 80px; }
+    main { padding-top: 0; }
 
-    /* ── Intro section ────────────────────────────────────────── */
-    .section-intro {
-      background: rgba(16, 7, 18, 0.96);
-      padding: 72px 60px 64px;
-      display: flex;
-      justify-content: center;
-    }
-    .intro-inner {
-      display: flex;
-      gap: 60px;
-      align-items: center;
-      max-width: 960px;
+    /* ── Hero section (Figma design) ──────────────────────────── */
+    .wirk-hero {
       width: 100%;
+      height: calc(100vh - 80px);
+      min-height: 620px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
     }
-    .intro-image-col {
-      flex: 0 0 auto;
-      width: 400px;
-    }
-    /* Pink dashed glow frame around intro mockup */
-    .intro-deco-frame {
-      border-radius: 22px;
-      padding: 6px;
-      border: 2px dashed rgba(255, 150, 200, 0.6);
-      box-shadow:
-        0 0 14px rgba(255, 120, 180, 0.45),
-        0 0 36px rgba(220, 80, 150, 0.22),
-        0 0 64px rgba(190, 46, 92, 0.12);
-    }
-    .intro-mockup {
-      width: 100%; height: auto;
-      border-radius: 16px;
-      display: block;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.55);
-    }
-    .intro-text-col { flex: 1; }
-    .intro-eyebrow {
-      font-family: 'Nunito', sans-serif;
-      font-size: 11px; letter-spacing: 3.5px; text-transform: uppercase;
-      color: rgba(190, 46, 92, 0.8);
-      margin-bottom: 10px;
-    }
-    .intro-subheading {
-      font-family: 'Cinzel', serif;
-      font-size: 26px; font-weight: 700; line-height: 1.2;
-      color: rgba(255, 200, 220, 0.96);
-      text-shadow: 0 0 18px rgba(190,46,92,0.38), 0 0 40px rgba(160,30,70,0.18);
-      margin-bottom: 22px;
-    }
-    .intro-body {
-      font-family: 'Nunito', sans-serif;
-      font-size: 14px; line-height: 1.82;
-      color: rgba(235, 200, 215, 0.72);
-      margin-bottom: 14px;
-    }
-    .intro-body:last-child { margin-bottom: 0; }
 
-    /* ── Section: dark (display areas) ───────────────────────── */
+    .hero-left {
+      width: 340px;
+      padding-left: 9%;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-wordmark {
+      font-family: 'Roboto Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 130px;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: #2C243A;
+      user-select: none;
+    }
+    .hero-wordmark .wm-i { color: #BE2E5C; }
+
+    .hero-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+    }
+
+    .hero-phones-img {
+      height: 88%;
+      width: auto;
+      max-width: 100%;
+      display: block;
+      /* multiply on white bg removes the JPG white background */
+      mix-blend-mode: multiply;
+      object-fit: contain;
+    }
+
+    /* ── Section: display (phone galleries) ─────────────────── */
     .section-display {
-      background: rgba(16, 7, 18, 0.96);
+      background: #f7f3f5;
       padding: 64px 40px;
       display: flex; flex-direction: column; align-items: center;
     }
@@ -169,19 +221,14 @@
     .project-label {
       font-family: 'Nunito', sans-serif;
       font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
-      color: rgba(240, 184, 204, 0.6); margin-bottom: 14px;
+      color: rgba(190, 46, 92, 0.65); margin-bottom: 14px;
     }
 
     h1 {
       font-family: 'Cinzel', serif;
       font-size: clamp(48px, 7vw, 84px);
       font-weight: 900; letter-spacing: 0.08em;
-      color: rgba(255, 200, 220, 0.97);
-      text-shadow:
-        0 0 16px rgba(230, 80, 130, 0.95),
-        0 0 38px rgba(200, 50, 90, 0.65),
-        0 0 75px rgba(160, 30, 70, 0.38),
-        0 0 130px rgba(120, 20, 50, 0.2);
+      color: #2C243A;
       line-height: 1.1;
     }
 
@@ -211,27 +258,25 @@
       overflow: hidden;
       position: relative;
       flex-shrink: 0;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(240,184,204,0.12),
-                  0 0 16px 2px rgba(255, 120, 180, 0.32),
-                  0 0 36px 4px rgba(220, 80, 150, 0.15);
-      outline: 2px dashed rgba(255, 155, 205, 0.55);
+      box-shadow: 0 12px 40px rgba(44,36,58,0.18), 0 0 0 1px rgba(190,46,92,0.10),
+                  0 0 14px 2px rgba(190, 46, 92, 0.18);
+      outline: 2px dashed rgba(190, 80, 120, 0.38);
       outline-offset: 7px;
       transition: box-shadow 0.28s ease, outline-color 0.28s ease;
     }
     .phone-wrap:hover .phone {
-      box-shadow: 0 22px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(240,184,204,0.22),
-                  0 0 24px 4px rgba(255, 120, 180, 0.55),
-                  0 0 52px 8px rgba(220, 80, 150, 0.28);
-      outline-color: rgba(255, 155, 205, 0.9);
+      box-shadow: 0 20px 56px rgba(44,36,58,0.26), 0 0 0 1px rgba(190,46,92,0.20),
+                  0 0 24px 4px rgba(190, 46, 92, 0.32);
+      outline-color: rgba(190, 80, 120, 0.70);
     }
 
     .phone-label {
       font-family: 'Nunito', sans-serif;
       font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
-      color: rgba(240, 184, 204, 0.6);
+      color: rgba(190, 46, 92, 0.65);
       transition: color 0.28s ease;
     }
-    .phone-wrap:hover .phone-label { color: rgba(255, 184, 215, 1); }
+    .phone-wrap:hover .phone-label { color: rgba(190, 46, 92, 1); }
 
     /* ── App screen shared elements ────────────────────────────── */
     .screen {
@@ -655,9 +700,9 @@
       font-size:7px; color:rgba(240,184,204,0.5);
     }
 
-    /* ── Section: light pink (text areas) ────────────────────── */
+    /* ── Section: text areas ──────────────────────────────────── */
     .section-text {
-      background: rgba(238, 185, 205, 0.93);
+      background: #fdf0f5;
       padding: 64px 60px;
     }
     .text-inner { max-width: 820px; margin: 0 auto; }
@@ -665,19 +710,58 @@
     h2 {
       font-family: 'Cinzel', serif;
       font-size: clamp(28px, 4vw, 42px); font-weight: 700;
-      letter-spacing: 0.06em; color: #1e0b18; margin-bottom: 24px; line-height: 1.2;
+      letter-spacing: 0.06em; color: #2C243A; margin-bottom: 24px; line-height: 1.2;
     }
     p {
       font-family: 'Nunito', sans-serif;
-      font-size: 17px; line-height: 1.85; color: #2a0e1c; margin-bottom: 18px;
+      font-size: 17px; line-height: 1.85; color: #3a2a32; margin-bottom: 18px;
     }
     .tag-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:28px; }
     .tag {
       display:inline-block; padding:6px 16px;
-      background:rgba(44,36,58,0.14); border:1px solid rgba(44,36,58,0.22);
+      background:rgba(190,46,92,0.08); border:1px solid rgba(190,46,92,0.28);
       border-radius:20px; font-family:'Nunito',sans-serif;
-      font-size:12px; letter-spacing:0.8px; text-transform:uppercase; color:#1e0b18;
+      font-size:12px; letter-spacing:0.8px; text-transform:uppercase; color:#2C243A;
     }
+
+    /* ── Showcase slices (transparent phone exports) ──────────── */
+    .section-showcase {
+      padding: 72px 40px 80px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .section-showcase.tint-a { background: linear-gradient(180deg, #fdf0f5 0%, #f7e6ee 100%); }
+    .section-showcase.tint-b { background: linear-gradient(180deg, #f7e6ee 0%, #fbeef4 100%); }
+    .section-showcase.tint-c { background: linear-gradient(180deg, #fbeef4 0%, #ffffff 100%); }
+
+    .showcase-head {
+      text-align: center;
+      max-width: 760px;
+      margin-bottom: 44px;
+    }
+    .showcase-eyebrow {
+      font-family: 'Nunito', sans-serif;
+      font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(190, 46, 92, 0.7);
+      margin-bottom: 12px;
+    }
+    .showcase-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(26px, 4vw, 40px); font-weight: 700;
+      letter-spacing: 0.05em; color: #2C243A; line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .showcase-sub {
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px; line-height: 1.7; color: #6a4a57;
+    }
+    .slice-img {
+      width: 100%;
+      max-width: 1000px;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 18px 38px rgba(44, 36, 58, 0.22));
+    }
+    .slice-img.slice-3 { max-width: 1080px; }
 
     /* ── Lightbox ─────────────────────────────────────────────── */
     .lightbox-overlay {
@@ -777,212 +861,54 @@
   </header>
 
   <main>
+    <!-- Layered reconstruction of the Wïrk Figma artboard (node 85:750) -->
+    <div class="stage">
+      <!-- background gradient + transparent foreground visuals -->
+      <img class="layer bg" src="wirk_bg.jpg" alt="">
+      <img class="layer fg" src="wirk_fg.png" alt="Wïrk case study visuals">
 
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!--  INTRO — Wicked Problem                                     -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section class="section-intro">
-      <div class="intro-inner">
+      <!-- de-backgrounded UI slices -->
+      <img class="slice s1" src="wirk_ui_slice1.png" alt="Wïrk wireframes — tap to pay flow">
+      <img class="slice s2" src="wirk_ui_slice2.png" alt="Wïrk iterations — dashboard & captcha flow">
 
-        <div class="intro-image-col">
-          <div class="intro-deco-frame">
-            <img src="wirk_mockup.png" alt="Wïrk app mockup" class="intro-mockup">
-          </div>
-        </div>
+      <!-- real section text -->
+      <div class="t script" style="left:18.254%;top:4.289%;width:16.733%;">Buy now, Wirk later !</div>
+      <div class="t body"   style="left:8.466%;top:5.244%;width:25.132%;">Wïrk is a speculative mobile payment platform that allows users to purchase products through labor instead of money. The app combines cashless payment, gig work, and AI-training microtasks into one experience. </div>
 
-        <div class="intro-text-col">
-          <div class="intro-eyebrow">Wicked Problem</div>
-          <h2 class="intro-subheading">Wïrked</h2>
-          <p class="intro-body">
-            Wirk is a revolutionary system that redefines how people pay for products.
-            Instead of using money as the middleman between work and purchases, Wirk removes
-            that extra step. Users no longer need to earn money first and then spend it.
-            With Wirk, they can simply work directly for the things they want — a true
-            "buy now, work later" model.
-          </p>
-          <p class="intro-body">
-            With Wirk, users make purchases using tap-to-pay on their phones. Once a purchase
-            is made, the app immediately converts the original price into wirk hours rather
-            than a monetary amount. Users then complete small tasks inside the app to work
-            off what they owe — mainly image-tagging activities that help train AI models
-            for Gork.
-          </p>
-          <p class="intro-body">
-            Through this system, users receive the product they want, work opportunities,
-            and a single integrated platform for both labour and payment. No side jobs to
-            search for, no cash transactions. Wirk creates a new payment experience built
-            on the value of human labour.
-          </p>
-        </div>
+      <div class="t head" style="left:8.466%;top:27.333%;width:15.542%;color:#EEBFC8;">User Flow &amp; Possible impact</div>
+      <div class="t head" style="left:8.466%;top:34.100%;width:15.542%;color:#fff;">Wireframe &amp; Early Design</div>
+      <div class="t head" style="left:8.466%;top:41.689%;width:15.542%;color:#fff;">A/B Test &amp; Iteration</div>
+      <div class="t head" style="left:59.127%;top:42.289%;width:9.458%;color:#fff;">Version A</div>
+      <div class="t head" style="left:77.910%;top:42.289%;width:9.458%;color:#fff;">Version B</div>
+      <div class="t head" style="left:8.333%;top:54.567%;width:16.997%;color:#fff;">Client Feedback &amp; User Testing</div>
+      <div class="t head" style="left:8.466%;top:58.944%;width:13.624%;color:#fff;">Iteration &amp; New Features</div>
 
-      </div>
-    </section>
+      <div class="t body"   style="left:40.873%;top:55.922%;width:50.661%;">After the first round of user testing and client feedback, we revised the home page to create a stronger banking-inspired interface. This helped make the app feel more like a financial product while still maintaining Wïrk’s exaggerated, satirical brand personality.
+The client also wanted the app to feel more engaging and memorable, with features that encouraged users to stay longer and invite others. In response, we designed a Boost page with additional engagement mechanics, including smile-based interactions, social sharing tasks, referral prompts, push notifications, and a feature that allowed users to take or “snatch” Wïrk Bucks from friends.
+Overall feature breadth, visual direction, and interaction design worked well. The app successfully communicated the client’s strange, playful, and chaotic product concept while maintaining a coherent mobile interface.</div>
 
+      <div class="t head" style="left:8.466%;top:75.400%;width:21.429%;color:#2C2439;">Customer Assumptions &amp; Design Response</div>
+      <div class="t assump" style="left:16.204%;top:76.511%;width:67.526%;">At the beginning of the project, we assumed that our target users would be familiar with tap-to-pay, buy-now-pay-later services, gamified task systems, and social sharing features. We also assumed that users would be more willing to complete repetitive AI-training tasks if the experience felt playful, visually rewarding, and easy to track.
+To validate these assumptions, we conducted user research, competitor analysis, usability testing with 10 participants, and A/B testing on the dashboard and task interface. The testing helped us understand how users interpreted Wïrk Bucks, how clearly they understood their remaining work hours, and which interaction patterns encouraged them to continue using the app.
+Some assumptions were validated: users responded positively to clear progress tracking, playful visual feedback, and competitive features such as the leaderboard. However, we also invalidated the assumption that users would accept unclear repayment information. When the relationship between money, Wïrk Bucks, and labor was not transparent, users were more likely to feel confused or distrustful.
+Based on these findings, our design addressed user needs by creating a clearer dashboard, showing work owed versus work completed, simplifying the task flow, and using gamified interactions to make repetitive labor feel more engaging. At the same time, we recognized that these engagement strategies raised ethical concerns because they could encourage users to spend more time in the app without fully understanding the real value of their labor.</div>
 
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!--  DISPLAY BLOCK 1 — Connect · Home · Boost                  -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section class="section-display">
+      <div class="t head" style="left:8.267%;top:81.700%;width:21.429%;color:#2C2439;">Final Prototype</div>
+      <div class="t head" style="left:9.193%;top:89.900%;width:21.429%;color:#FF004F;">Brand Identity</div>
 
-      <div class="project-hero">
-        <div class="project-label">Project 01</div>
-        <h1>Wïrked</h1>
-      </div>
+      <!-- clickable "View Prototype" button (hover → pink + dark blue text) -->
+      <a class="hotspot proto-btn"
+         href="https://www.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/wirk%EF%BC%9A%EF%BC%89?node-id=0-1&t=XmvgM62jj37c24KS-1"
+         target="_blank" rel="noopener"
+         aria-label="View Wïrk prototype">View Prototype</a>
 
-      <div class="phone-gallery">
-
-        <!-- ── CONNECT screen ──────────────── -->
-        <div class="phone-wrap" data-nodeid="1-157">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-157&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Connect</span>
-        </div>
-
-        <!-- ── HOME screen ─────────────────── -->
-        <div class="phone-wrap" data-nodeid="1-1231">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-1231&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Home</span>
-        </div>
-
-        <!-- ── BOOST screen ────────────────── -->
-        <div class="phone-wrap" data-nodeid="1-409">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-409&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Boost Page</span>
-        </div>
-
-      </div><!-- /phone-gallery -->
-    </section>
-
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!--  TEXT BLOCK 1                                               -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section class="section-text">
-      <div class="text-inner">
-        <h2>Overview</h2>
-        <p>
-          Wïrked is a speculative UX project exploring what happens when labour and commerce become inseparable. The fictional Wïrk platform removes money from transactions entirely, offering users a "buy now, wïrk later" model — purchases are paid off through microtasks like AI image classification, directly within the app.
-        </p>
-        <p>
-          The design challenge was to make exploitation feel delightful. Every screen had to balance the sinister premise of unpaid gig labour with an interface so clean, gamified, and familiar that users might not notice — or might not mind. W-Bucks, streak rewards, and boost mechanics were designed to maximise engagement and rationalise participation.
-        </p>
-        <div class="tag-row">
-          <span class="tag">UX Design</span>
-          <span class="tag">Figma</span>
-          <span class="tag">Speculative Fiction</span>
-          <span class="tag">Gamification</span>
-          <span class="tag">Mobile App</span>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!--  DISPLAY BLOCK 2 — Hello · Spin · Captcha · Pay            -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section class="section-display">
-      <div class="phone-gallery">
-
-        <!-- ── HELLO PAGE ──────────────────── -->
-        <div class="phone-wrap" data-nodeid="1-95">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-95&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Hello Page</span>
-        </div>
-
-        <!-- ── SPIN PAGE ────────────────────── -->
-        <div class="phone-wrap" data-nodeid="1-318">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-318&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Spin Page</span>
-        </div>
-
-        <!-- ── CAPTCHA screen ──────────────── -->
-        <div class="phone-wrap" data-nodeid="1-1192">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-1192&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Captcha</span>
-        </div>
-
-        <!-- ── PAY screen ───────────────────── -->
-        <div class="phone-wrap" data-nodeid="1-1156">
-          <div class="phone">
-            <iframe src="https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=1-1156&embed-host=share&hide-ui=1" class="figma-embed" allowfullscreen></iframe>
-          </div>
-          <span class="phone-label">Pay Screen 7</span>
-        </div>
-
-      </div><!-- /phone-gallery -->
-    </section>
-
-
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <!--  TEXT BLOCK 2                                               -->
-    <!-- ═══════════════════════════════════════════════════════════ -->
-    <section class="section-text">
-      <div class="text-inner">
-        <h2>Design Process</h2>
-        <p>
-          The interface was intentionally designed to weaponise familiarity. Streak counters, spin wheels, and progress rings borrow conventions from fitness and gaming apps — contexts where compulsive engagement is considered a feature. By making the labour loop feel rewarding rather than extractive, the UI challenges users (and designers) to interrogate what "good UX" can obscure.
-        </p>
-        <p>
-          The captcha task screen — where users identify images to "train AI" — is drawn directly from how CAPTCHA systems work in the real world. The irony is intentional: unpaid micro-labour is already everywhere, Wïrk simply makes the transaction visible and monetises it.
-        </p>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ── Lightbox ──────────────────────────────────────────────── -->
-  <div id="lightbox" class="lightbox-overlay" aria-hidden="true">
-    <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
-    <div class="lightbox-phone">
-      <iframe id="lightboxIframe" src="" class="lightbox-iframe" allowfullscreen></iframe>
+      <!-- clickable phone display next to the title -->
+      <a class="hotspot proto-phones"
+         href="https://www.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/wirk%EF%BC%9A%EF%BC%89?node-id=0-1&t=XmvgM62jj37c24KS-1"
+         target="_blank" rel="noopener"
+         aria-label="View Wïrk prototype"></a>
     </div>
-  </div>
-
-  <script>
-    const overlay      = document.getElementById('lightbox');
-    const lbIframe     = document.getElementById('lightboxIframe');
-    const lbClose      = document.getElementById('lightboxClose');
-
-    function openLightbox(nodeId) {
-      lbIframe.src =
-        `https://embed.figma.com/design/e7OFjtlqN5gZu7K19KxU7C/Untitled?node-id=${nodeId}&embed-host=share&hide-ui=1`;
-      overlay.classList.add('open');
-      overlay.removeAttribute('aria-hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      /* clear src after fade-out so it stops loading */
-      setTimeout(() => { lbIframe.src = ''; }, 350);
-    }
-
-    document.querySelectorAll('.phone-wrap').forEach(wrap => {
-      wrap.addEventListener('click', () => openLightbox(wrap.dataset.nodeid));
-    });
-
-    lbClose.addEventListener('click', closeLightbox);
-    /* click on backdrop (not the phone) closes too */
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) closeLightbox();
-    });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeLightbox();
-    });
-  </script>
+  </main>
 
 </body>
 </html>
