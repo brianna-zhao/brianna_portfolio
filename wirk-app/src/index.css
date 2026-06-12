@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-bone font-body text-plum antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: theme('colors.rose.DEFAULT');
+    color: #fff;
+  }
+}
+
+@layer components {
+  /* Wïrk wordmark — the "ï" smile is drawn with the ::after on .wirk-i */
+  .wirk-i {
+    position: relative;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}

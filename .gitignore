@@ -3,3 +3,10 @@
 *.mov
 *.avi
 *.mkv
+
+# React app (wirk case study) — source lives in wirk-app/, built output is committed to /wirked
+wirk-app/node_modules/
+wirk-app/dist/
+
+# Scratch assets from the Figma export / verification pass
+wirk_assets/

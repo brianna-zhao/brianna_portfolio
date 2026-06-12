@@ -38,11 +38,20 @@
       animation-delay: var(--delay, 0s);
     }
 
-    /* Text stars — always visible, gentle twinkle so the name is always legible */
+    /* Text stars — pop in progressively to build the name, then twinkle */
     .star.text-star {
       background: rgba(230, 255, 235, 1);
       filter: drop-shadow(0 0 2px rgba(180, 255, 210, 0.7));
-      animation-name: textStarTwinkle;
+      opacity: 0;
+      animation:
+        starAppear 0.7s ease-out var(--appear, 0s) both,
+        textStarTwinkle var(--dur, 12s) ease-in-out var(--twinkle, 0.7s) infinite;
+    }
+    /* Each star grows from nothing into place — the name fills in over time */
+    @keyframes starAppear {
+      0%   { opacity: 0;   transform: scale(0); }
+      65%  { opacity: 1;   transform: scale(1.3); }
+      100% { opacity: 0.9; transform: scale(1); }
     }
     @keyframes textStarTwinkle {
       0%   { opacity: 0.38; transform: scale(0.88); }
@@ -455,14 +464,16 @@
     .logo {
       position: fixed; top: 22px; left: 26px;
       z-index: 300; text-decoration: none; display: block;
+      will-change: transform;        /* promote to its own GPU layer for the hop */
     }
     .logo img {
       height: 90px; width: auto;
-      filter: drop-shadow(0 0 6px rgba(200, 230, 210, 0.3));
       transition: filter 0.3s ease;
+      /* no drop-shadow during the hop — it's recomputed every frame and causes lag */
     }
-    /* hover transform only applies after hop animation is done */
+    /* glow + hover only after the hop settles */
     .logo.hop-done img {
+      filter: drop-shadow(0 0 6px rgba(200, 230, 210, 0.3));
       transition: filter 0.3s ease, transform 0.3s ease;
     }
     .logo.hop-done:hover img {
@@ -600,17 +611,17 @@
       <div class="content-box right boba">
         <div class="boba-phones">
           <div class="boba-phone">
-            <iframe class="boba-figma"
+            <iframe class="boba-figma" loading="lazy"
               src="https://embed.figma.com/design/mA5nd9m5KgbvaNvf55LBkw/Peter-and-Brianna-Heytea-Dark-Pattern-Prototype?node-id=122-181&embed-host=share&hide-ui=1"
               allowfullscreen></iframe>
           </div>
           <div class="boba-phone">
-            <iframe class="boba-figma"
+            <iframe class="boba-figma" loading="lazy"
               src="https://embed.figma.com/design/mA5nd9m5KgbvaNvf55LBkw/Peter-and-Brianna-Heytea-Dark-Pattern-Prototype?node-id=110-301&embed-host=share&hide-ui=1"
               allowfullscreen></iframe>
           </div>
           <div class="boba-phone">
-            <iframe class="boba-figma"
+            <iframe class="boba-figma" loading="lazy"
               src="https://embed.figma.com/design/mA5nd9m5KgbvaNvf55LBkw/Peter-and-Brianna-Heytea-Dark-Pattern-Prototype?node-id=110-512&embed-host=share&hide-ui=1"
               allowfullscreen></iframe>
           </div>
@@ -635,7 +646,7 @@
           <span class="rb rb6"></span>
         </div>
         <div class="rock-media">
-          <iframe class="rock-video"
+          <iframe class="rock-video" loading="lazy"
             src="https://www.youtube.com/embed/QyoTqN33Ijc?autoplay=1&mute=1&loop=1&playlist=QyoTqN33Ijc"
             allow="autoplay; fullscreen"
             allowfullscreen></iframe>
@@ -682,7 +693,7 @@
 
 <!-- ══════════════════ LOGO ══════════════════ -->
 <a href="home.html" class="logo" title="Home">
-  <img src="logo.png" alt="Logo">
+  <img src="logo_small.png" alt="Logo">
 </a>
 
 
@@ -736,18 +747,22 @@
     const PAD_L = 3, AVAIL_W = 94;
     const TOP = 5, AVAIL_H = 41;
 
+    /* total time over which the name fills in, left → right */
+    const BUILD = 3.0;
     textPts.forEach(pt => {
       const s = document.createElement('div');
       s.className = 'star text-star';
       const size = 1.1 + Math.random() * 2.2;
       const dur  = (8 + Math.random() * 10).toFixed(2);
-      const delay = -(Math.random() * parseFloat(dur)).toFixed(2);
+      /* stars appear in writing order (left→right) with a little jitter */
+      const appear  = ((pt.x / CW) * BUILD + Math.random() * 0.45).toFixed(2);
+      const twinkle = (parseFloat(appear) + 0.7).toFixed(2);
       const left  = (PAD_L + (pt.x / CW) * AVAIL_W).toFixed(2);
       const top   = (TOP   + (pt.y / CH) * AVAIL_H).toFixed(2);
       s.style.cssText =
         `width:${size}px;height:${size}px;` +
         `top:${top}%;left:${left}%;` +
-        `--dur:${dur}s;animation-delay:${delay}s;`;
+        `--dur:${dur}s;--appear:${appear}s;--twinkle:${twinkle}s;`;
       starsEl.appendChild(s);
     });
 
@@ -769,8 +784,12 @@
     }
   }
 
-  /* Wait for Cormorant Garamond to load before sampling the canvas */
-  document.fonts.ready.then(buildStars);
+  /* Wait for Cormorant Garamond to load before sampling the canvas,
+     but never block forever — fall back after 1.5s so stars always build. */
+  let starsBuilt = false;
+  const buildOnce = () => { if (!starsBuilt) { starsBuilt = true; buildStars(); } };
+  document.fonts.ready.then(buildOnce);
+  setTimeout(buildOnce, 1500);
 
   /* ── Per-mushroom ambient glow ── */
   document.querySelectorAll('.mushroom-slot').forEach(slot => {
@@ -868,6 +887,7 @@
     anim.onfinish = () => {
       logo.style.transform = 'none';
       logo.style.opacity   = '1';
+      logo.style.willChange = 'auto';   /* release the GPU layer once settled */
       anim.cancel();
       logo.classList.add('hop-done');
     };
